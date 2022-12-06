@@ -6,10 +6,10 @@ import (
 	"strconv"
 )
 
-func ReadFile(name string) ([]string, error) {
+func MustReadFile(name string) []string {
 	f, err := os.Open(name)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 	defer func() { _ = f.Close() }()
 	scanner := bufio.NewScanner(f)
@@ -18,15 +18,10 @@ func ReadFile(name string) ([]string, error) {
 		l := scanner.Text()
 		res = append(res, l)
 	}
-	return res, scanner.Err()
-}
-
-func MustReadFile(name string) []string {
-	ll, err := ReadFile(name)
-	if err != nil {
-		panic(err)
+	if scanner.Err() != nil {
+		panic(scanner.Err())
 	}
-	return ll
+	return res
 }
 
 func MustDo(fn func() error) {
