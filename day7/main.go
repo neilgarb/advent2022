@@ -21,9 +21,7 @@ func parts() error {
 			break
 		}
 		if i == 0 {
-			cur = &dir{
-				name: "",
-			}
+			cur = new(dir)
 			continue
 		}
 		if line == "$ ls" {
@@ -41,13 +39,10 @@ func parts() error {
 					})
 					continue
 				}
-				cur.files = append(cur.files, &file{
-					name: name,
-					size: util.MustParseInt(size),
-				})
+				sizei := util.MustParseInt(size)
 				c := cur
 				for c != nil {
-					c.size += cur.files[len(cur.files)-1].size
+					c.size += sizei
 					allsizes[c] = c.size
 					c = c.parent
 				}
@@ -103,11 +98,5 @@ type dir struct {
 	parent *dir
 	name   string
 	dirs   []*dir
-	files  []*file
 	size   int
-}
-
-type file struct {
-	name string
-	size int
 }
