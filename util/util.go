@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func MustReadFile(name string) []string {
@@ -31,7 +32,7 @@ func MustDo(fn func() error) {
 }
 
 func MustParseInt(s string) int {
-	i, err := strconv.Atoi(s)
+	i, err := strconv.Atoi(strings.TrimSpace(s))
 	if err != nil {
 		panic(err)
 	}
