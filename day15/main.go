@@ -26,18 +26,11 @@ func part1() error {
 		b := c{util.MustParseInt(matches[2]), util.MustParseInt(matches[3])}
 		sensors[s] = b
 		beacons[b] = true
-		m := s.x - man(s, b)
-		if m < min {
-			min = m
-		}
-		m = s.x + man(s, b)
-		if m > max {
-			max = m
-		}
+		min = util.Min(min, s.x-man(s, b))
+		max = util.Max(max, s.x+man(s, b))
 	}
 	y := 2000000
 	var tot int
-Loop:
 	for x := min; x <= max; x++ {
 		t := c{x, y}
 		if _, ok := beacons[t]; ok {
@@ -49,7 +42,7 @@ Loop:
 		for s, b := range sensors {
 			if man(t, s) <= man(b, s) {
 				tot++
-				continue Loop
+				break
 			}
 		}
 	}
@@ -66,15 +59,11 @@ func part2() error {
 		b := c{util.MustParseInt(matches[2]), util.MustParseInt(matches[3])}
 		sensors[s] = b
 	}
-MainLoop:
 	for s, b := range sensors {
 		d := man(s, b)
 		var tests []c
 		for x := -d; x <= d; x++ {
-			t := x
-			if t < 0 {
-				t = -t
-			}
+			t := util.Abs(x)
 			y := d - t
 			tests = append(tests, c{s.x + x, s.y + y + 1})
 			tests = append(tests, c{s.x + x, s.y - y - 1})
@@ -94,7 +83,7 @@ MainLoop:
 			}
 			if !found {
 				fmt.Println(t.x*4000000 + t.y)
-				break MainLoop
+				return nil
 			}
 		}
 	}
@@ -106,17 +95,5 @@ type c struct {
 }
 
 func man(from, to c) int {
-	var d int
-	if from.x > to.x {
-		d += from.x - to.x
-	} else {
-		d += to.x - from.x
-	}
-	if from.y > to.y {
-		d += from.y - to.y
-	} else {
-		d += to.y - from.y
-	}
-
-	return d
+	return util.Diff(from.x, to.x) + util.Diff(from.y, to.y)
 }
