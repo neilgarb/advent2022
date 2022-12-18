@@ -8,10 +8,10 @@ import (
 )
 
 func main() {
-	util.MustDo(parts)
+	parts()
 }
 
-func parts() error {
+func parts() {
 	lines := util.MustReadFile("input.txt")
 	var cur *dir
 	allsizes := make(map[*dir]int)
@@ -90,8 +90,6 @@ func parts() error {
 	}
 
 	fmt.Println(smallest)
-
-	return nil
 }
 
 type dir struct {

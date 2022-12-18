@@ -9,19 +9,19 @@ import (
 )
 
 func main() {
-	util.MustDo(part1)
-	util.MustDo(part2)
+	part1()
+	part2()
 }
 
-func part1() error {
-	return part(20, true)
+func part1() {
+	part(20, true)
 }
 
-func part2() error {
-	return part(10_000, false)
+func part2() {
+	part(10_000, false)
 }
 
-func part(rounds int, divthree bool) error {
+func part(rounds int, divthree bool) {
 	monkeys := parse("input.txt")
 	mod := 1
 	for _, m := range monkeys {
@@ -47,7 +47,6 @@ func part(rounds int, divthree bool) error {
 		return monkeys[i].activity > monkeys[j].activity
 	})
 	fmt.Println(monkeys[0].activity * monkeys[1].activity)
-	return nil
 }
 
 func parse(file string) []*monkey {

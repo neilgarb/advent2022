@@ -9,41 +9,36 @@ import (
 )
 
 func main() {
-	util.MustDo(part1)
-	util.MustDo(part2)
+	part1()
+	part2()
 }
 
-type c struct {
-	x, y int
-}
-
-func part1() error {
+func part1() {
 	lines := util.MustReadFile("input.txt")
-	var start, end c
+	var start, end util.V2
 	for y, line := range lines {
 		if x := strings.Index(line, "S"); x > -1 {
-			start = c{x, y}
+			start = util.V2{x, y}
 		}
 		if x := strings.Index(line, "E"); x > -1 {
-			end = c{x, y}
+			end = util.V2{x, y}
 		}
 	}
 
 	path := astar(start, end, lines)
 	fmt.Println(len(path) - 1) // Number of steps.
-	return nil
 }
 
 func part2() error {
 	lines := util.MustReadFile("input.txt")
-	var end c
-	var starts []c
+	var end util.V2
+	var starts []util.V2
 	for y, line := range lines {
 		for x, ch := range line {
 			if ch == 'E' {
-				end = c{x, y}
+				end = util.V2{x, y}
 			} else if ch == 'a' || ch == 'S' {
-				starts = append(starts, c{x, y})
+				starts = append(starts, util.V2{x, y})
 			}
 		}
 	}
@@ -61,17 +56,17 @@ func part2() error {
 	return nil
 }
 
-func astar(start, end c, lines []string) []c {
-	open := []c{start}
-	openm := map[c]bool{start: true}
-	from := make(map[c]c)
-	g := make(map[c]int)
+func astar(start, end util.V2, lines []string) []util.V2 {
+	open := []util.V2{start}
+	openm := map[util.V2]bool{start: true}
+	from := make(map[util.V2]util.V2)
+	g := make(map[util.V2]int)
 	g[start] = 0
-	f := make(map[c]int)
+	f := make(map[util.V2]int)
 	f[start] = dis(start, end)
 	w := len(lines[0])
 	for len(open) > 0 {
-		var cur c
+		var cur util.V2
 		lowest := math.MaxInt
 		var lowesti int
 		for i, t := range open {
@@ -86,18 +81,18 @@ func astar(start, end c, lines []string) []c {
 		}
 		open = append(open[:lowesti], open[lowesti+1:]...)
 		delete(openm, cur)
-		for _, dir := range []c{{0, 1}, {0, -1}, {1, 0}, {-1, 0}} {
-			neigh := c{cur.x + dir.x, cur.y + dir.y}
-			if neigh.x < 0 || neigh.x >= w || neigh.y < 0 || neigh.y >= len(lines) {
+		for _, dir := range []util.V2{{0, 1}, {0, -1}, {1, 0}, {-1, 0}} {
+			neigh := cur.Add(dir)
+			if neigh.X < 0 || neigh.X >= w || neigh.Y < 0 || neigh.Y >= len(lines) {
 				continue
 			}
-			elCur := lines[cur.y][cur.x]
+			elCur := lines[cur.Y][cur.X]
 			if elCur == 'S' {
 				elCur = 'a'
 			} else if elCur == 'E' {
 				elCur = 'z'
 			}
-			elNeigh := lines[neigh.y][neigh.x]
+			elNeigh := lines[neigh.Y][neigh.X]
 			if elNeigh == 'E' {
 				elNeigh = 'z'
 			} else if elNeigh == 'S' {
@@ -127,19 +122,19 @@ func astar(start, end c, lines []string) []c {
 	return nil
 }
 
-func makePath(from map[c]c, cur c) []c {
-	path := []c{cur}
+func makePath(from map[util.V2]util.V2, cur util.V2) []util.V2 {
+	path := []util.V2{cur}
 	for {
 		n, ok := from[cur]
 		if !ok {
 			break
 		}
-		path = append([]c{n}, path...)
+		path = append([]util.V2{n}, path...)
 		cur = n
 	}
 	return path
 }
 
-func dis(from, to c) int {
-	return (to.x - from.x) + (to.y - from.y)
+func dis(from, to util.V2) int {
+	return (to.X - from.X) + (to.Y - from.Y)
 }

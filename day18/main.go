@@ -8,50 +8,47 @@ import (
 )
 
 func main() {
-	util.MustDo(part1)
-	util.MustDo(part2)
+	part1()
+	part2()
 }
 
-func part1() error {
-	return part(false)
+func part1() {
+	part(false)
 }
 
-func part2() error {
-	return part(true)
+func part2() {
+	part(true)
 }
 
-func part(checkPockets bool) error {
+func part(checkPockets bool) {
 	lines := util.MustReadFile("input.txt")
-	cubes := make(map[c]bool)
+	cubes := make(map[util.V3]bool)
 	for _, line := range lines {
 		parts := strings.Split(line, ",")
-		cubes[c{
+		cubes[util.V3{
 			util.MustParseInt(parts[0]),
 			util.MustParseInt(parts[1]),
 			util.MustParseInt(parts[2]),
 		}] = true
 	}
-
 	var exposed int
 	for cube := range cubes {
 		for _, s := range sides {
-			newc := c{cube.x + s.x, cube.y + s.y, cube.z + s.z}
-			if !cubes[newc] {
+			newCube := cube.Add(s)
+			if !cubes[newCube] {
 				exposed++
 				if checkPockets {
-					if isPocket(cubes, newc, 1000, map[c]bool{newc: true}) {
+					if isPocket(cubes, newCube, 1000, map[util.V3]bool{newCube: true}) {
 						exposed--
 					}
 				}
 			}
 		}
 	}
-
 	fmt.Println(exposed)
-	return nil
 }
 
-var sides = []c{
+var sides = []util.V3{
 	{0, 0, 1},
 	{0, 0, -1},
 	{0, 1, 0},
@@ -60,17 +57,13 @@ var sides = []c{
 	{-1, 0, 0},
 }
 
-type c struct {
-	x, y, z int
-}
-
-func isPocket(cubes map[c]bool, cube c, max int, seen map[c]bool) bool {
+func isPocket(cubes map[util.V3]bool, cube util.V3, max int, seen map[util.V3]bool) bool {
 	if max == 0 {
 		return false
 	}
 	res := true
 	for _, s := range sides {
-		t := c{cube.x + s.x, cube.y + s.y, cube.z + s.z}
+		t := cube.Add(s)
 		if !cubes[t] && !seen[t] {
 			seen[t] = true
 			if !isPocket(cubes, t, max-1, seen) {

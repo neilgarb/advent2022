@@ -7,63 +7,54 @@ import (
 )
 
 func main() {
-	util.MustDo(part1)
-	util.MustDo(part2)
+	part1()
+	part2()
 }
 
-func part1() error {
-	return part(false, 2022)
+func part1() {
+	part(false, 2022)
 }
 
-func part2() error {
-	return part(true, 1_000_000_000_000)
+func part2() {
+	part(true, 1_000_000_000_000)
 }
 
-func part(log bool, n int) error {
+func part(log bool, n int) {
 	lines := util.MustReadFile("input.txt")
 	moves := lines[0]
 	var move int
-	grid := make(map[c]struct{})
+	grid := make(map[util.V2]struct{})
 	var maxHeight int
 	for i := 0; i < n; i++ {
 		if log {
 			fmt.Println(i, maxHeight)
 		}
-
 		r := rocks[i%len(rocks)]
 		width := widths[i%len(rocks)]
-		rc := c{2, maxHeight + 3}
-
+		rc := util.V2{2, maxHeight + 3}
 		for {
 			if moves[move%len(moves)] == '>' {
-				if canmove(r, width, rc, grid, c{1, 0}) {
-					rc.x++
+				if canMove(r, width, rc, grid, util.V2{1, 0}) {
+					rc.X++
 				}
 			} else if moves[move%len(moves)] == '<' {
-				if canmove(r, width, rc, grid, c{-1, 0}) {
-					rc.x--
+				if canMove(r, width, rc, grid, util.V2{-1, 0}) {
+					rc.X--
 				}
 			}
 			move++
-			if canmove(r, width, rc, grid, c{0, -1}) {
-				rc.y--
+			if canMove(r, width, rc, grid, util.V2{0, -1}) {
+				rc.Y--
 			} else {
 				for _, p := range r {
-					grid[c{p.x + rc.x, p.y + rc.y}] = struct{}{}
-					maxHeight = util.Max(maxHeight, p.y+rc.y+1)
+					grid[p.Add(rc)] = struct{}{}
+					maxHeight = util.Max(maxHeight, p.Y+rc.Y+1)
 				}
 				break
 			}
 		}
 	}
-
 	fmt.Println(maxHeight)
-
-	return nil
-}
-
-type c struct {
-	x, y int
 }
 
 var rocks = []rock{
@@ -82,18 +73,18 @@ var widths = []int{
 	2,
 }
 
-type rock []c
+type rock []util.V2
 
-func canmove(r rock, width int, rc c, grid map[c]struct{}, off c) bool {
-	newrc := c{rc.x + off.x, rc.y + off.y}
-	if newrc.x < 0 || newrc.y < 0 {
+func canMove(r rock, width int, rc util.V2, grid map[util.V2]struct{}, off util.V2) bool {
+	newRock := rc.Add(off)
+	if newRock.X < 0 || newRock.Y < 0 {
 		return false
 	}
-	if newrc.x+width > 7 {
+	if newRock.X+width > 7 {
 		return false
 	}
 	for _, p := range r {
-		if _, ok := grid[c{p.x + newrc.x, p.y + newrc.y}]; ok {
+		if _, ok := grid[p.Add(newRock)]; ok {
 			return false
 		}
 	}

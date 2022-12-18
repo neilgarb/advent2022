@@ -7,19 +7,19 @@ import (
 )
 
 func main() {
-	util.MustDo(part1)
-	util.MustDo(part2)
+	part1()
+	part2()
 }
 
-func part1() error {
-	return part(4)
+func part1() {
+	part(4)
 }
 
-func part2() error {
-	return part(14)
+func part2() {
+	part(14)
 }
 
-func part(l int) error {
+func part(l int) {
 	lines := util.MustReadFile("input.txt")
 	line := lines[0]
 	known := make(map[byte]int)
@@ -37,5 +37,4 @@ func part(l int) error {
 			break
 		}
 	}
-	return nil
 }

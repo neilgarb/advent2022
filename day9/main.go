@@ -8,26 +8,22 @@ import (
 )
 
 func main() {
-	util.MustDo(part1)
-	util.MustDo(part2)
+	part1()
+	part2()
 }
 
-type c struct {
-	x, y int
+func part1() {
+	part(2)
 }
 
-func part1() error {
-	return part(2)
+func part2() {
+	part(10)
 }
 
-func part2() error {
-	return part(10)
-}
-
-func part(knotCount int) error {
+func part(knotCount int) {
 	lines := util.MustReadFile("input.txt")
-	seen := make(map[c]bool)
-	rope := make([]c, knotCount)
+	seen := make(map[util.V2]bool)
+	rope := make([]util.V2, knotCount)
 	seen[rope[knotCount-1]] = true
 	for _, line := range lines {
 		dir, cnt, _ := strings.Cut(line, " ")
@@ -41,49 +37,34 @@ func part(knotCount int) error {
 	}
 
 	fmt.Println(len(seen))
-	return nil
 }
 
-func abs(i int) int {
-	if i < 0 {
-		return -i
-	}
-	return i
-}
-
-func sign(i int) int {
-	if i < 0 {
-		return -1
-	}
-	return 1
-}
-
-func moveTo(from, to c) c {
-	diffX := to.x - from.x
-	diffY := to.y - from.y
-	if abs(diffX) > 1 && abs(diffY) > 1 {
-		from.x += sign(diffX)
-		from.y += sign(diffY)
-	} else if abs(diffX) > 1 {
-		from.x += sign(diffX)
-		from.y = to.y
-	} else if abs(diffY) > 1 {
-		from.y += sign(diffY)
-		from.x = to.x
+func moveTo(from, to util.V2) util.V2 {
+	diffX := to.X - from.X
+	diffY := to.Y - from.Y
+	if util.Abs(diffX) > 1 && util.Abs(diffY) > 1 {
+		from.X += util.Sign(diffX)
+		from.Y += util.Sign(diffY)
+	} else if util.Abs(diffX) > 1 {
+		from.X += util.Sign(diffX)
+		from.Y = to.Y
+	} else if util.Abs(diffY) > 1 {
+		from.Y += util.Sign(diffY)
+		from.X = to.X
 	}
 	return from
 }
 
-func move(h c, dir string) c {
+func move(h util.V2, dir string) util.V2 {
 	switch dir {
 	case "U":
-		h.y++
+		h.Y++
 	case "D":
-		h.y--
+		h.Y--
 	case "L":
-		h.x--
+		h.X--
 	case "R":
-		h.x++
+		h.X++
 	}
 	return h
 }

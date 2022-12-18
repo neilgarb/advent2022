@@ -7,51 +7,46 @@ import (
 )
 
 func main() {
-	util.MustDo(part1)
-	util.MustDo(part2)
+	part1()
+	part2()
 }
 
-type coord struct {
-	x, y int
-}
-
-func part1() error {
+func part1() {
 	trees := parseTrees()
 	dim := len(trees)
-	tot := make(map[coord]bool)
+	tot := make(map[util.V2]bool)
 	for i := 0; i < dim; i++ {
-		tot[coord{i, 0}] = true
-		tot[coord{i, dim - 1}] = true
-		tot[coord{0, i}] = true
-		tot[coord{dim - 1, i}] = true
-		bigx, bigy := -1, -1
+		tot[util.V2{i, 0}] = true
+		tot[util.V2{i, dim - 1}] = true
+		tot[util.V2{0, i}] = true
+		tot[util.V2{dim - 1, i}] = true
+		bigX, bigY := -1, -1
 		for j := 0; j < dim; j++ {
-			if trees[j][i] > bigx {
-				tot[coord{j, i}] = true
-				bigx = trees[j][i]
+			if trees[j][i] > bigX {
+				tot[util.V2{j, i}] = true
+				bigX = trees[j][i]
 			}
-			if trees[i][j] > bigy {
-				tot[coord{i, j}] = true
-				bigy = trees[i][j]
+			if trees[i][j] > bigY {
+				tot[util.V2{i, j}] = true
+				bigY = trees[i][j]
 			}
 		}
-		bigx, bigy = -1, -1
+		bigX, bigY = -1, -1
 		for j := dim - 1; j >= 0; j-- {
-			if trees[j][i] > bigx {
-				tot[coord{j, i}] = true
-				bigx = trees[j][i]
+			if trees[j][i] > bigX {
+				tot[util.V2{j, i}] = true
+				bigX = trees[j][i]
 			}
-			if trees[i][j] > bigy {
-				tot[coord{i, j}] = true
-				bigy = trees[i][j]
+			if trees[i][j] > bigY {
+				tot[util.V2{i, j}] = true
+				bigY = trees[i][j]
 			}
 		}
 	}
 	fmt.Println(len(tot))
-	return nil
 }
 
-func part2() error {
+func part2() {
 	trees := parseTrees()
 	dim := len(trees)
 	high := -1
@@ -63,7 +58,6 @@ func part2() error {
 		}
 	}
 	fmt.Println(high)
-	return nil
 }
 
 func score(trees [][]int, x, y int) int {

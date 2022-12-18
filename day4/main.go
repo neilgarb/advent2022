@@ -8,11 +8,11 @@ import (
 )
 
 func main() {
-	util.MustDo(part1)
-	util.MustDo(part2)
+	part1()
+	part2()
 }
 
-func part1() error {
+func part1() {
 	lines := util.MustReadFile("input.txt")
 	var tot int
 	for _, line := range lines {
@@ -23,10 +23,9 @@ func part1() error {
 		}
 	}
 	fmt.Println(tot)
-	return nil
 }
 
-func part2() error {
+func part2() {
 	lines := util.MustReadFile("input.txt")
 	var tot int
 	for _, line := range lines {
@@ -37,7 +36,6 @@ func part2() error {
 		}
 	}
 	fmt.Println(tot)
-	return nil
 }
 
 type section struct {

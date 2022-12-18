@@ -25,12 +25,6 @@ func MustReadFile(name string) []string {
 	return res
 }
 
-func MustDo(fn func() error) {
-	if err := fn(); err != nil {
-		panic(err)
-	}
-}
-
 func MustParseInt(s string) int {
 	i, err := strconv.Atoi(strings.TrimSpace(s))
 	if err != nil {
@@ -65,4 +59,30 @@ func Abs(i int) int {
 		return -i
 	}
 	return i
+}
+
+func Sign(i int) int {
+	if i < 0 {
+		return -1
+	}
+	if i > 0 {
+		return 1
+	}
+	return 0
+}
+
+type V2 struct {
+	X, Y int
+}
+
+func (v V2) Add(w V2) V2 {
+	return V2{v.X + w.X, v.Y + w.Y}
+}
+
+type V3 struct {
+	X, Y, Z int
+}
+
+func (v V3) Add(w V3) V3 {
+	return V3{v.X + w.X, v.Y + w.Y, v.Z + w.Z}
 }

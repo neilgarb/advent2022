@@ -8,19 +8,19 @@ import (
 )
 
 func main() {
-	util.MustDo(part1)
-	util.MustDo(part2)
+	part1()
+	part2()
 }
 
-func part1() error {
-	return part(false)
+func part1() {
+	part(false)
 }
 
-func part2() error {
-	return part(true)
+func part2() {
+	part(true)
 }
 
-func part(render bool) error {
+func part(render bool) {
 	lines := util.MustReadFile("input.txt")
 	c := cpu{x: 1, render: render}
 	for _, line := range lines {
@@ -35,7 +35,6 @@ func part(render bool) error {
 	if !render {
 		fmt.Println(c.score)
 	}
-	return nil
 }
 
 type cpu struct {

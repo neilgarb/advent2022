@@ -9,25 +9,24 @@ import (
 )
 
 func main() {
-	util.MustDo(part1)
-	util.MustDo(part2)
+	part1()
+	part2()
 }
 
-func part1() error {
+func part1() {
 	lines := util.MustReadFile("input.txt")
 	rock, _, max := parse(lines)
-	sand := make(map[c]bool)
-
+	sand := make(map[util.V2]bool)
 SandLoop:
 	for {
-		cur := c{500, 0}
+		cur := util.V2{500, 0}
 	GrainLoop:
 		for {
 			for _, x := range []int{0, -1, 1} {
-				t := c{cur.x + x, cur.y + 1}
+				t := cur.Add(util.V2{x, 1})
 				if !rock[t] && !sand[t] {
 					cur = t
-					if cur.y >= max.y {
+					if cur.Y >= max.Y {
 						break SandLoop
 					}
 					continue GrainLoop
@@ -37,26 +36,23 @@ SandLoop:
 			continue SandLoop
 		}
 	}
-
 	fmt.Println(len(sand))
-	return nil
 }
 
-func part2() error {
+func part2() {
 	lines := util.MustReadFile("input.txt")
 	rock, _, max := parse(lines)
-	sand := make(map[c]bool)
-
+	sand := make(map[util.V2]bool)
 SandLoop:
 	for {
-		cur := c{500, 0}
+		cur := util.V2{500, 0}
 	GrainLoop:
 		for {
 			for _, x := range []int{0, -1, 1} {
-				t := c{cur.x + x, cur.y + 1}
+				t := cur.Add(util.V2{x, 1})
 				if !rock[t] && !sand[t] {
 					cur = t
-					if cur.y >= max.y+1 {
+					if cur.Y >= max.Y+1 {
 						sand[cur] = true
 						continue SandLoop
 					}
@@ -64,37 +60,35 @@ SandLoop:
 				}
 			}
 			sand[cur] = true
-			if cur.x == 500 && cur.y == 0 {
+			if cur.X == 500 && cur.Y == 0 {
 				break SandLoop
 			}
 			continue SandLoop
 		}
 	}
-
 	fmt.Println(len(sand))
-	return nil
 }
 
-func parse(lines []string) (map[c]bool, c, c) {
-	res := make(map[c]bool)
-	var min, max c
-	min.x, min.y = math.MaxInt, math.MaxInt
+func parse(lines []string) (map[util.V2]bool, util.V2, util.V2) {
+	res := make(map[util.V2]bool)
+	var min, max util.V2
+	min.X, min.Y = math.MaxInt, math.MaxInt
 	for _, line := range lines {
 		parts := strings.Split(line, " -> ")
 		for i := 1; i < len(parts); i++ {
 			for _, p := range draw(parts[i-1], parts[i]) {
 				res[p] = true
-				if p.x < min.x {
-					min.x = p.x
+				if p.X < min.X {
+					min.X = p.X
 				}
-				if p.y < min.y {
-					min.y = p.y
+				if p.Y < min.Y {
+					min.Y = p.Y
 				}
-				if p.x > max.x {
-					max.x = p.x
+				if p.X > max.X {
+					max.X = p.X
 				}
-				if p.y > max.y {
-					max.y = p.y
+				if p.Y > max.Y {
+					max.Y = p.Y
 				}
 			}
 		}
@@ -102,22 +96,18 @@ func parse(lines []string) (map[c]bool, c, c) {
 	return res, min, max
 }
 
-type c struct {
-	x, y int
-}
-
-func draw(froms, tos string) []c {
-	fromxs, fromys, _ := strings.Cut(froms, ",")
-	toxs, toys, _ := strings.Cut(tos, ",")
-	fromx, fromy := util.MustParseInt(fromxs), util.MustParseInt(fromys)
-	tox, toy := util.MustParseInt(toxs), util.MustParseInt(toys)
-	if fromx > tox || fromy > toy {
-		fromx, tox, fromy, toy = tox, fromx, toy, fromy
+func draw(fromStr, toStr string) []util.V2 {
+	fromXStr, fromYStr, _ := strings.Cut(fromStr, ",")
+	toXStr, toYStr, _ := strings.Cut(toStr, ",")
+	fromX, fromY := util.MustParseInt(fromXStr), util.MustParseInt(fromYStr)
+	tox, toy := util.MustParseInt(toXStr), util.MustParseInt(toYStr)
+	if fromX > tox || fromY > toy {
+		fromX, tox, fromY, toy = tox, fromX, toy, fromY
 	}
-	var res []c
-	for y := fromy; y <= toy; y++ {
-		for x := fromx; x <= tox; x++ {
-			res = append(res, c{x, y})
+	var res []util.V2
+	for y := fromY; y <= toy; y++ {
+		for x := fromX; x <= tox; x++ {
+			res = append(res, util.V2{x, y})
 		}
 	}
 	return res

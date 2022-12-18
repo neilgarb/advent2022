@@ -10,11 +10,11 @@ import (
 )
 
 func main() {
-	util.MustDo(part1)
-	util.MustDo(part2)
+	part1()
+	part2()
 }
 
-func part1() error {
+func part1() {
 	lines := util.MustReadFile("input.txt")
 	var tot int
 	for i := range lines {
@@ -28,10 +28,9 @@ func part1() error {
 		}
 	}
 	fmt.Println(tot)
-	return nil
 }
 
-func part2() error {
+func part2() {
 	lines := util.MustReadFile("input.txt")
 	_, p1 := parse("[[2]]")
 	_, p2 := parse("[[6]]")
@@ -53,7 +52,6 @@ func part2() error {
 		}
 	}
 	fmt.Println(tot)
-	return nil
 }
 
 type itemlist []*item

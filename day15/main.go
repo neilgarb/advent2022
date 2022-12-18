@@ -9,30 +9,30 @@ import (
 )
 
 func main() {
-	util.MustDo(part1)
-	util.MustDo(part2)
+	part1()
+	part2()
 }
 
 var re = regexp.MustCompile(`\-?\d+`)
 
 func part1() error {
 	lines := util.MustReadFile("input.txt")
-	sensors := make(map[c]c)
-	beacons := make(map[c]bool)
+	sensors := make(map[util.V2]util.V2)
+	beacons := make(map[util.V2]bool)
 	min, max := math.MaxInt, 0
 	for _, line := range lines {
 		matches := re.FindAllString(line, 4)
-		s := c{util.MustParseInt(matches[0]), util.MustParseInt(matches[1])}
-		b := c{util.MustParseInt(matches[2]), util.MustParseInt(matches[3])}
+		s := util.V2{util.MustParseInt(matches[0]), util.MustParseInt(matches[1])}
+		b := util.V2{util.MustParseInt(matches[2]), util.MustParseInt(matches[3])}
 		sensors[s] = b
 		beacons[b] = true
-		min = util.Min(min, s.x-man(s, b))
-		max = util.Max(max, s.x+man(s, b))
+		min = util.Min(min, s.X-man(s, b))
+		max = util.Max(max, s.X+man(s, b))
 	}
 	y := 2000000
 	var tot int
 	for x := min; x <= max; x++ {
-		t := c{x, y}
+		t := util.V2{x, y}
 		if _, ok := beacons[t]; ok {
 			continue
 		}
@@ -50,28 +50,28 @@ func part1() error {
 	return nil
 }
 
-func part2() error {
+func part2() {
 	lines := util.MustReadFile("input.txt")
-	sensors := make(map[c]c)
+	sensors := make(map[util.V2]util.V2)
 	for _, line := range lines {
 		matches := re.FindAllString(line, 4)
-		s := c{util.MustParseInt(matches[0]), util.MustParseInt(matches[1])}
-		b := c{util.MustParseInt(matches[2]), util.MustParseInt(matches[3])}
+		s := util.V2{util.MustParseInt(matches[0]), util.MustParseInt(matches[1])}
+		b := util.V2{util.MustParseInt(matches[2]), util.MustParseInt(matches[3])}
 		sensors[s] = b
 	}
 	for s, b := range sensors {
 		d := man(s, b)
-		var tests []c
+		var tests []util.V2
 		for x := -d; x <= d; x++ {
 			t := util.Abs(x)
 			y := d - t
-			tests = append(tests, c{s.x + x, s.y + y + 1})
-			tests = append(tests, c{s.x + x, s.y - y - 1})
+			tests = append(tests, s.Add(util.V2{x, y + 1}))
+			tests = append(tests, s.Add(util.V2{x, -y - 1}))
 		}
-		tests = append(tests, c{s.x - d - 1, s.y})
-		tests = append(tests, c{s.x + d + 1, s.y})
+		tests = append(tests, s.Add(util.V2{-d - 1, 0}))
+		tests = append(tests, s.Add(util.V2{d + 1, 0}))
 		for _, t := range tests {
-			if t.x < 0 || t.x > 4000000 || t.y < 0 || t.y > 4000000 {
+			if t.X < 0 || t.X > 4000000 || t.Y < 0 || t.Y > 4000000 {
 				continue
 			}
 			var found bool
@@ -82,18 +82,13 @@ func part2() error {
 				}
 			}
 			if !found {
-				fmt.Println(t.x*4000000 + t.y)
-				return nil
+				fmt.Println(t.X*4000000 + t.Y)
+				return
 			}
 		}
 	}
-	return nil
 }
 
-type c struct {
-	x, y int
-}
-
-func man(from, to c) int {
-	return util.Diff(from.x, to.x) + util.Diff(from.y, to.y)
+func man(from, to util.V2) int {
+	return util.Diff(from.X, to.X) + util.Diff(from.Y, to.Y)
 }

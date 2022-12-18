@@ -8,19 +8,19 @@ import (
 )
 
 func main() {
-	util.MustDo(part1)
-	util.MustDo(part2)
+	part1()
+	part2()
 }
 
-func part1() error {
-	return part(false)
+func part1() {
+	part(false)
 }
 
-func part2() error {
-	return part(true)
+func part2() {
+	part(true)
 }
 
-func part(preserveOrder bool) error {
+func part(preserveOrder bool) {
 	lines := util.MustReadFile("input.txt")
 	stacks := make([][]string, 100)
 	var stackCount int
@@ -63,6 +63,4 @@ func part(preserveOrder bool) error {
 		fmt.Print(stacks[i][len(stacks[i])-1])
 	}
 	fmt.Println()
-
-	return nil
 }
