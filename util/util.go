@@ -79,6 +79,10 @@ func (v V2) Add(w V2) V2 {
 	return V2{v.X + w.X, v.Y + w.Y}
 }
 
+func (v V2) Neg() V2 {
+	return V2{-v.X, -v.Y}
+}
+
 type V3 struct {
 	X, Y, Z int
 }
