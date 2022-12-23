@@ -29,7 +29,6 @@ func part(part2 bool) {
 			}
 		}
 	}
-
 	if !part2 {
 		var dirIdx int
 		for i := 0; i < 10; i++ {
@@ -43,60 +42,44 @@ func part(part2 bool) {
 		i := 1
 		for {
 			if !round(elves, dirIdx) {
-				fmt.Println(i)
 				break
 			}
 			dirIdx = (dirIdx + 1) % 4
 			i++
 		}
+		fmt.Println(i)
 	}
 }
 
 func round(elves map[V2]bool, dirIdx int) bool {
 	proposals := make(map[V2][]V2)
-
-	// First half.
-ElfLoop:
 	for e := range elves {
-		var haveNeighbours bool
-		for y := -1; y <= 1; y++ {
-			for x := -1; x <= 1; x++ {
-				if x == 0 && y == 0 {
-					continue
-				} else if elves[e.Add(V2{x, y})] {
-					haveNeighbours = true
+		var props []V2
+		for i := 0; i < 4; i++ {
+			switch dirs[(dirIdx+i)%4] {
+			case 0:
+				if !elves[e.Add(V2{1, 0})] && !elves[e.Add(V2{1, 1})] && !elves[e.Add(V2{1, -1})] {
+					props = append(props, e.Add(V2{1, 0}))
+				}
+			case 1:
+				if !elves[e.Add(V2{0, 1})] && !elves[e.Add(V2{1, 1})] && !elves[e.Add(V2{-1, 1})] {
+					props = append(props, e.Add(V2{0, 1}))
+				}
+			case 2:
+				if !elves[e.Add(V2{-1, 0})] && !elves[e.Add(V2{-1, 1})] && !elves[e.Add(V2{-1, -1})] {
+					props = append(props, e.Add(V2{-1, 0}))
+				}
+			case 3:
+				if !elves[e.Add(V2{0, -1})] && !elves[e.Add(V2{1, -1})] && !elves[e.Add(V2{-1, -1})] {
+					props = append(props, e.Add(V2{0, -1}))
 				}
 			}
 		}
-		if haveNeighbours {
-			for i := 0; i < 4; i++ {
-				switch dirs[(dirIdx+i)%4] {
-				case 0:
-					if !elves[e.Add(V2{1, 0})] && !elves[e.Add(V2{1, 1})] && !elves[e.Add(V2{1, -1})] {
-						proposals[e.Add(V2{1, 0})] = append(proposals[e.Add(V2{1, 0})], e)
-						continue ElfLoop
-					}
-				case 1:
-					if !elves[e.Add(V2{0, 1})] && !elves[e.Add(V2{1, 1})] && !elves[e.Add(V2{-1, 1})] {
-						proposals[e.Add(V2{0, 1})] = append(proposals[e.Add(V2{0, 1})], e)
-						continue ElfLoop
-					}
-				case 2:
-					if !elves[e.Add(V2{-1, 0})] && !elves[e.Add(V2{-1, 1})] && !elves[e.Add(V2{-1, -1})] {
-						proposals[e.Add(V2{-1, 0})] = append(proposals[e.Add(V2{-1, 0})], e)
-						continue ElfLoop
-					}
-				case 3:
-					if !elves[e.Add(V2{0, -1})] && !elves[e.Add(V2{1, -1})] && !elves[e.Add(V2{-1, -1})] {
-						proposals[e.Add(V2{0, -1})] = append(proposals[e.Add(V2{0, -1})], e)
-						continue ElfLoop
-					}
-				}
-			}
+		if len(props) == 0 || len(props) == 4 {
+			continue
 		}
+		proposals[props[0]] = append(proposals[props[0]], e)
 	}
-
-	// Second half.
 	for k, v := range proposals {
 		if len(v) > 1 {
 			continue
@@ -104,7 +87,6 @@ ElfLoop:
 		delete(elves, v[0])
 		elves[k] = true
 	}
-
 	return len(proposals) > 0
 }
 
